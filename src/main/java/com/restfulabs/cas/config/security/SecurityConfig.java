@@ -15,6 +15,7 @@ import com.restfulabs.cas.config.security.jwt.JWTAuthEntryPoint;
 import com.restfulabs.cas.config.security.jwt.JWTAuthTokenFilter;
 import com.restfulabs.cas.config.security.jwt.JWTProvider;
 import com.restfulabs.cas.service.impl.UserDetailsServiceImpl;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -56,10 +57,13 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	protected void configure(HttpSecurity http) throws Exception {
-		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/api/auth/**").permitAll()
+		http.cors().and().csrf().disable().authorizeRequests().antMatchers("/api/authenticate").permitAll()
+				.antMatchers("/api/signup").permitAll()
 				.antMatchers("/api/admin/**").hasRole("ADMIN").antMatchers("/api/user/**").hasRole("USER").anyRequest()
 				.authenticated().and().exceptionHandling().authenticationEntryPoint(unauthorizedHandler).and()
 				.sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS);
+
+		http.addFilterBefore(authenticationTokenFilter(), UsernamePasswordAuthenticationFilter.class);
 	}
 
 }

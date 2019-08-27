@@ -3,6 +3,7 @@ package com.restfulabs.cas.config.security.jwt;
 import java.security.Principal;
 import java.util.Date;
 
+import com.restfulabs.cas.service.impl.UserPrincipal;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -20,9 +21,9 @@ public class JWTProvider {
 
 	public String generateJWTToken(Authentication authentication) {
 
-		Principal userPrincipal = (Principal) authentication.getPrincipal();
+		UserPrincipal userPrincipal = (UserPrincipal) authentication.getPrincipal();
 
-		return Jwts.builder().setSubject(userPrincipal.getName()).setIssuedAt(new Date())
+		return Jwts.builder().setSubject(userPrincipal.getUsername()).setIssuedAt(new Date())
 				.setExpiration(new Date(new Date().getTime() + jwtExpiration * 1000))
 				.signWith(SignatureAlgorithm.HS256, jwtSecret).compact();
 	}
